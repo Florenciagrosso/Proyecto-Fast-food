@@ -1,0 +1,133 @@
+
+-- CREAR TABLA DE CATEGORIAS 
+CREATE TABLE Categorias(
+    CategoriaID INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR (255) NOT NULL);
+
+-- CREAR TABLA DE PRODUCTOS
+
+CREATE TABLE Productos(
+   ProductoID INT PRIMARY KEY IDENTITY,
+   Nombre VARCHAR (255) NOT NULL,
+   CategoriaID INT,
+   Precio DECIMAL (10,2) NOT NULL);
+
+-- CREAR TABLA DE SUCURSALES
+
+CREATE TABLE Sucursales(
+    SucursalID INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR (255) NOT NULL,
+	Direccion VARCHAR (255));
+
+-- CREAR TABLA DE EMPLEADOS
+
+CREATE TABLE Empleados(
+    EmpleadoID INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR (255) NOT NULL,
+	Posicion VARCHAR (255) ,
+	Departamento VARCHAR (255) ,
+	SucursalID INT,
+	Rol VARCHAR (255));
+
+-- CREAR TABLA DE CLIENTES
+
+CREATE TABLE Clientes(
+    ClienteID INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR (255) NOT NULL,
+	Direccion VARCHAR (255));
+
+-- CREAR TABLA DE ORIGENES ORDEN
+
+CREATE TABLE OrigenesOrden(
+    OrigenID INT PRIMARY KEY IDENTITY,
+	Descripcion VARCHAR (255) NOT NULL);
+
+-- CREAR TABLA DE TIPOS DE PAGO
+
+CREATE TABLE TiposPago(
+    TipoPagoID INT PRIMARY KEY IDENTITY,
+	Descripcion VARCHAR (255) NOT NULL);
+
+-- CREAR TABLA DE MENSAJERO
+
+CREATE TABLE Mensajeros(
+    MensajeroID INT PRIMARY KEY IDENTITY,
+    Nombre VARCHAR (255) NOT NULL,
+    EsExterno BIT NOT NULL
+);
+
+-- CREAR TABLA  DE ORDENES
+
+CREATE TABLE Ordenes(
+    OrdenID INT PRIMARY KEY IDENTITY,
+    ClienteID INT,
+    EmpleadoID INT,
+    SucursalID INT,
+    MensajeroID INT, 
+    TipoPagoID INT,
+    OrigenID INT,
+    HorarioVenta VARCHAR (255), -- Mañana, Tarde, Noche.
+    TotalCompra DECIMAL (10,2),
+    KilometrosRecorrer DECIMAL (10,2),
+    FechaDespacho DATETIME,
+    FechaEntrega DATETIME,
+    FechaOrdenTomada DATETIME,
+    FechaOrdenLista DATETIME
+);
+
+-- CREAR TABLA DE DETALLE DE ORDEN
+
+CREATE TABLE DetalleOrden(
+    OrdenID INT,
+	ProductoID INT,
+	Cantidad INT,
+	Precio DECIMAL (10,2),
+	PRIMARY KEY (OrdenID, ProductoID));
+
+-- AGREGO CLAVES FORANEAS A LA TABLA ORDENES
+	
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_Clientes
+FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID);
+
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_Empleados
+FOREIGN KEY (EmpleadoID) REFERENCES Empleados(EmpleadoID);
+
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_Sucursales
+FOREIGN KEY (SucursalID) REFERENCES Sucursales(SucursalID);
+
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_Mensajeros
+FOREIGN KEY (MensajeroID) REFERENCES Mensajeros(MensajeroID);
+
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_TiposPago
+FOREIGN KEY (TipoPagoID) REFERENCES TiposPago(TipoPagoID);
+
+ALTER TABLE Ordenes
+ADD CONSTRAINT FK_Ordenes_OrigenesOrden
+FOREIGN KEY (OrigenID) REFERENCES OrigenesOrden(OrigenID);
+
+-- AGREGO CLAVES FORANEAS A LA TABLA PRODUCTOS
+
+ALTER TABLE Productos
+ADD CONSTRAINT FK_Productos_Categorias
+FOREIGN KEY (CategoriaID) REFERENCES Categorias(CategoriaID);
+
+-- AGREGO CLAVES FORANEAS A LA TABLA EMPLEADOS
+
+ALTER TABLE Empleados
+ADD CONSTRAINT FK_Empleados_Sucursales
+FOREIGN KEY (SucursalID) REFERENCES Sucursales(SucursalID);
+
+-- AGREGO CLAVES FORANEAS A LA TABLA DETALLEORDEN
+
+ALTER TABLE DetalleOrden
+ADD CONSTRAINT FK_DetalleOrden_Ordenes
+FOREIGN KEY (OrdenID) REFERENCES Ordenes(OrdenID);
+
+ALTER TABLE DetalleOrden
+ADD CONSTRAINT FK_DetalleOrden_Productos
+FOREIGN KEY (ProductoID) REFERENCES Productos(ProductoID);
